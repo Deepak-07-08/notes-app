@@ -2,12 +2,33 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 const API_URL = "https://notes-app-taxg.onrender.com";
+const USER_ID_KEY = "notes_anonymous_user_id";
+
+/* ---------------- ANONYMOUS USER ---------------- */
+
+function getUserId() {
+  let userId = localStorage.getItem(USER_ID_KEY);
+
+  if (!userId) {
+    userId = crypto.randomUUID();
+    localStorage.setItem(USER_ID_KEY, userId);
+  }
+
+  return userId;
+}
+
+const USER_ID = getUserId();
+
+/* ---------------- CONSTANTS ---------------- */
+
 const REPEAT_OPTIONS = [
   { value: "none", label: "Does not repeat" },
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
   { value: "monthly", label: "Monthly" },
 ];
+
+/* ---------------- HELPERS ---------------- */
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -24,10 +45,9 @@ function formatDate(dateString) {
 function getToday() {
   const now = new Date();
 
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}-${String(now.getDate()).padStart(2, "0")}`;
+  return `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
 function formatTime(time) {
@@ -42,6 +62,8 @@ function formatTime(time) {
     minute
   ).padStart(2, "0")} ${period}`;
 }
+
+/* ---------------- CALENDAR ---------------- */
 
 function CalendarPicker({ value, onChange, onClose }) {
   const initialDate = value
@@ -102,9 +124,11 @@ function CalendarPicker({ value, onChange, onClose }) {
       </div>
 
       <div className="calendar-weekdays">
-        {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
-          <span key={index}>{day}</span>
-        ))}
+        {["S", "M", "T", "W", "T", "F", "S"].map(
+          (day, index) => (
+            <span key={index}>{day}</span>
+          )
+        )}
       </div>
 
       <div className="calendar-days">
@@ -112,13 +136,13 @@ function CalendarPicker({ value, onChange, onClose }) {
           <button key={`empty-${index}`} disabled />
         ))}
 
-        {Array.from({ length: daysInMonth }, (_, index) => {
-          const day = index + 1;
-
-          const dateString = `${year}-${String(month + 1).padStart(
-            2,
-            "0"
-          )}-${String(day).padStart(2, "0")}`;
+        {Array.from(
+          { length: daysInMonth },
+          (_, index) => index + 1
+        ).map((day) => {
+          const dateString = `${year}-${String(
+            month + 1
+          ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
           return (
             <button
@@ -137,6 +161,8 @@ function CalendarPicker({ value, onChange, onClose }) {
     </div>
   );
 }
+
+/* ---------------- TIME PICKER ---------------- */
 
 function TimePicker({ value, onChange }) {
   const [hour, minute] = value
@@ -158,7 +184,10 @@ function TimePicker({ value, onChange }) {
     }
 
     onChange(
-      `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
+      `${String(h).padStart(2, "0")}:${String(m).padStart(
+        2,
+        "0"
+      )}`
     );
   };
 
@@ -170,11 +199,13 @@ function TimePicker({ value, onChange }) {
           updateTime(e.target.value, minute, period)
         }
       >
-        {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
-          <option key={h} value={h}>
-            {String(h).padStart(2, "0")}
-          </option>
-        ))}
+        {Array.from({ length: 12 }, (_, i) => i + 1).map(
+          (h) => (
+            <option key={h} value={h}>
+              {String(h).padStart(2, "0")}
+            </option>
+          )
+        )}
       </select>
 
       <span>:</span>
@@ -217,6 +248,8 @@ function TimePicker({ value, onChange }) {
   );
 }
 
+/* ---------------- MAIN APP ---------------- */
+
 function App() {
   const [notes, setNotes] = useState([]);
   const [search, setSearch] = useState("");
@@ -241,31 +274,42 @@ function App() {
 
   const [form, setForm] = useState(emptyForm);
 
-  // LOAD NOTES
+  /* ---------------- LOAD NOTES ---------------- */
+
   useEffect(() => {
-    fetch(`${API_URL}/notes`)
-      .then((response) => {
+    const loadNotes = async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/notes?user_id=${encodeURIComponent(
+            USER_ID
+          )}`
+        );
+
         if (!response.ok) {
           throw new Error("Failed to load notes");
         }
 
-        return response.json();
-      })
-      .then((data) => {
+        const data = await response.json();
+
         setNotes(data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error loading notes:", error);
-      });
+      }
+    };
+
+    loadNotes();
   }, []);
 
-  // NEW NOTE
+  /* ---------------- NEW NOTE ---------------- */
+
   const openNewNote = () => {
     setEditingId(null);
+
     setForm({
       ...emptyForm,
       reminder_date: getToday(),
     });
+
     setCalendarOpen(false);
     setShowModal(true);
 
@@ -274,7 +318,8 @@ function App() {
     }, 100);
   };
 
-  // EDIT NOTE
+  /* ---------------- EDIT NOTE ---------------- */
+
   const openEditNote = (note) => {
     setEditingId(note.id);
 
@@ -283,8 +328,10 @@ function App() {
       content: note.content || "",
       pinned: note.pinned || false,
       reminder_enabled: note.reminder_enabled || false,
-      reminder_date: note.reminder_date || getToday(),
-      reminder_time: note.reminder_time || "12:00",
+      reminder_date:
+        note.reminder_date || getToday(),
+      reminder_time:
+        note.reminder_time || "12:00",
       repeat: note.repeat || "none",
     });
 
@@ -296,14 +343,16 @@ function App() {
     }, 100);
   };
 
-  // CLOSE MODAL
+  /* ---------------- CLOSE MODAL ---------------- */
+
   const closeModal = () => {
     setShowModal(false);
     setEditingId(null);
     setCalendarOpen(false);
   };
 
-  // SAVE NOTE
+  /* ---------------- SAVE NOTE ---------------- */
+
   const saveNote = async () => {
     const title = form.title.trim();
     const content = form.content.trim();
@@ -314,21 +363,30 @@ function App() {
     }
 
     const noteData = {
-      ...form,
+      user_id: USER_ID,
       title: title || "Untitled Note",
       content,
+      pinned: form.pinned,
+      reminder_enabled: form.reminder_enabled,
       reminder_date: form.reminder_enabled
         ? form.reminder_date
         : null,
       reminder_time: form.reminder_enabled
         ? form.reminder_time
         : null,
+      repeat: form.reminder_enabled
+        ? form.repeat
+        : "none",
     };
 
     try {
       if (editingId) {
+        /* UPDATE */
+
         const response = await fetch(
-          `${API_URL}/notes/${editingId}`,
+          `${API_URL}/notes/${editingId}?user_id=${encodeURIComponent(
+            USER_ID
+          )}`,
           {
             method: "PUT",
             headers: {
@@ -346,17 +404,26 @@ function App() {
 
         setNotes((previous) =>
           previous.map((note) =>
-            note.id === editingId ? updatedNote : note
+            note.id === editingId
+              ? updatedNote
+              : note
           )
         );
       } else {
-        const response = await fetch(`${API_URL}/notes`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(noteData),
-        });
+        /* CREATE */
+
+        const response = await fetch(
+          `${API_URL}/notes?user_id=${encodeURIComponent(
+            USER_ID
+          )}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(noteData),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to create note");
@@ -364,7 +431,10 @@ function App() {
 
         const newNote = await response.json();
 
-        setNotes((previous) => [newNote, ...previous]);
+        setNotes((previous) => [
+          newNote,
+          ...previous,
+        ]);
       }
 
       closeModal();
@@ -374,13 +444,16 @@ function App() {
     }
   };
 
-  // DELETE NOTE
+  /* ---------------- DELETE NOTE ---------------- */
+
   const confirmDelete = async () => {
     if (!deleteId) return;
 
     try {
       const response = await fetch(
-        `${API_URL}/notes/${deleteId}`,
+        `${API_URL}/notes/${deleteId}?user_id=${encodeURIComponent(
+          USER_ID
+        )}`,
         {
           method: "DELETE",
         }
@@ -391,7 +464,9 @@ function App() {
       }
 
       setNotes((previous) =>
-        previous.filter((note) => note.id !== deleteId)
+        previous.filter(
+          (note) => note.id !== deleteId
+        )
       );
 
       setDeleteId(null);
@@ -401,21 +476,28 @@ function App() {
     }
   };
 
-  // PIN / UNPIN
+  /* ---------------- PIN / UNPIN ---------------- */
+
   const togglePin = async (note) => {
     try {
       const updatedData = {
+        user_id: USER_ID,
         title: note.title,
         content: note.content,
         pinned: !note.pinned,
-        reminder_enabled: note.reminder_enabled,
-        reminder_date: note.reminder_date,
-        reminder_time: note.reminder_time,
+        reminder_enabled:
+          note.reminder_enabled,
+        reminder_date:
+          note.reminder_date,
+        reminder_time:
+          note.reminder_time,
         repeat: note.repeat,
       };
 
       const response = await fetch(
-        `${API_URL}/notes/${note.id}`,
+        `${API_URL}/notes/${note.id}?user_id=${encodeURIComponent(
+          USER_ID
+        )}`,
         {
           method: "PUT",
           headers: {
@@ -433,7 +515,9 @@ function App() {
 
       setNotes((previous) =>
         previous.map((item) =>
-          item.id === note.id ? updatedNote : item
+          item.id === note.id
+            ? updatedNote
+            : item
         )
       );
     } catch (error) {
@@ -441,6 +525,8 @@ function App() {
       alert("Could not update the note.");
     }
   };
+
+  /* ---------------- SEARCH + SORT ---------------- */
 
   const filteredNotes = notes
     .filter((note) => {
@@ -461,9 +547,12 @@ function App() {
       );
     });
 
+  /* ---------------- UI ---------------- */
+
   return (
     <div>
       {/* HEADER */}
+
       <header className="header">
         <div className="logo">
           <span className="logo-icon">📝</span>
@@ -478,7 +567,9 @@ function App() {
               type="text"
               placeholder="Search notes..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
             />
           </div>
 
@@ -492,10 +583,17 @@ function App() {
       </header>
 
       {/* MAIN */}
+
       <main className="main">
         <div className="section-title">
           <h2>Your Notes</h2>
-          <span>{filteredNotes.length} notes</span>
+
+          <span>
+            {filteredNotes.length}{" "}
+            {filteredNotes.length === 1
+              ? "note"
+              : "notes"}
+          </span>
         </div>
 
         {filteredNotes.length === 0 ? (
@@ -532,19 +630,28 @@ function App() {
               >
                 <div className="note-card-header">
                   <h3>
-                    {note.title || "Untitled Note"}
+                    {note.title ||
+                      "Untitled Note"}
                   </h3>
 
                   <button
-                    className="pin-btn"
-                    onClick={() => togglePin(note)}
+                    className={`pin-btn ${
+                      note.pinned
+                        ? "pinned"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      togglePin(note)
+                    }
                     title={
                       note.pinned
                         ? "Unpin"
                         : "Pin"
                     }
                   >
-                    {note.pinned ? "📌" : "📍"}
+                    {note.pinned
+                      ? "📌"
+                      : "📍"}
                   </button>
                 </div>
 
@@ -568,7 +675,8 @@ function App() {
                           note.reminder_time
                         )}
 
-                        {note.repeat !== "none" &&
+                        {note.repeat !==
+                          "none" &&
                           ` • ${
                             REPEAT_OPTIONS.find(
                               (item) =>
@@ -619,11 +727,15 @@ function App() {
       </main>
 
       {/* CREATE / EDIT MODAL */}
+
       {showModal && (
         <div
           className="modal-overlay"
           onMouseDown={(e) => {
-            if (e.target === e.currentTarget) {
+            if (
+              e.target ===
+              e.currentTarget
+            ) {
               closeModal();
             }
           }}
@@ -653,6 +765,8 @@ function App() {
             </div>
 
             <div className="modal-body">
+              {/* TITLE */}
+
               <label className="field-label">
                 Title
               </label>
@@ -671,6 +785,8 @@ function App() {
                 }
               />
 
+              {/* CONTENT */}
+
               <label className="field-label content-label">
                 Content
               </label>
@@ -688,15 +804,22 @@ function App() {
               />
 
               {/* REMINDER */}
+
               <div className="reminder-section">
                 <div className="reminder-top">
                   <div className="reminder-title">
-                    <span className="bell">🔔</span>
+                    <span className="bell">
+                      🔔
+                    </span>
 
                     <div>
-                      <strong>Reminder</strong>
+                      <strong>
+                        Reminder
+                      </strong>
+
                       <small>
-                        Get reminded about this note
+                        Get reminded about
+                        this note
                       </small>
                     </div>
                   </div>
@@ -704,18 +827,23 @@ function App() {
                   <label className="switch">
                     <input
                       type="checkbox"
-                      checked={form.reminder_enabled}
+                      checked={
+                        form.reminder_enabled
+                      }
                       onChange={(e) => {
                         const enabled =
                           e.target.checked;
 
                         setForm({
                           ...form,
-                          reminder_enabled: enabled,
+                          reminder_enabled:
+                            enabled,
                         });
 
                         if (!enabled) {
-                          setCalendarOpen(false);
+                          setCalendarOpen(
+                            false
+                          );
                         }
                       }}
                     />
@@ -767,7 +895,9 @@ function App() {
                             })
                           }
                           onClose={() =>
-                            setCalendarOpen(false)
+                            setCalendarOpen(
+                              false
+                            )
                           }
                         />
                       )}
@@ -807,7 +937,9 @@ function App() {
                           {REPEAT_OPTIONS.map(
                             (option) => (
                               <option
-                                key={option.value}
+                                key={
+                                  option.value
+                                }
                                 value={
                                   option.value
                                 }
@@ -846,6 +978,7 @@ function App() {
       )}
 
       {/* DELETE CONFIRMATION */}
+
       {deleteId && (
         <div className="delete-overlay">
           <div className="delete-modal">
@@ -862,7 +995,9 @@ function App() {
             <div className="delete-actions">
               <button
                 className="cancel-btn"
-                onClick={() => setDeleteId(null)}
+                onClick={() =>
+                  setDeleteId(null)
+                }
               >
                 Cancel
               </button>
