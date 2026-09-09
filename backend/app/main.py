@@ -12,16 +12,15 @@ from .schemas import NoteCreate, NoteResponse, NoteUpdate
 
 Base.metadata.create_all(bind=engine)
 
-
 app = FastAPI(title="Notes App API")
 
 
 app.add_middleware(
     CORSMiddleware,
-   allow_origins=[
-    "http://localhost:5173",
-    "https://my-notessapp.netlify.app",
-],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://my-notessapp.netlify.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,11 +51,15 @@ def health():
         }
 
 
-# GET ALL NOTES
+# GET NOTES FOR ONE USER
 @app.get("/notes", response_model=list[NoteResponse])
-def get_notes(db: Session = Depends(get_db)):
+def get_notes(
+    user_id: str,
+    db: Session = Depends(get_db),
+):
     return (
         db.query(models.Note)
+        .filter(models.Note.user_id == user_id)
         .order_by(
             models.Note.pinned.desc(),
             models.Note.created_at.desc(),
@@ -72,6 +75,7 @@ def create_note(
     db: Session = Depends(get_db),
 ):
     new_note = models.Note(
+        user_id=note.user_id,
         title=note.title,
         content=note.content,
         pinned=note.pinned,
@@ -98,7 +102,10 @@ def update_note(
 ):
     existing_note = (
         db.query(models.Note)
-        .filter(models.Note.id == note_id)
+        .filter(
+            models.Note.id == note_id,
+            models.Note.user_id == note.user_id,
+        )
         .first()
     )
 
@@ -126,11 +133,15 @@ def update_note(
 @app.delete("/notes/{note_id}")
 def delete_note(
     note_id: int,
+    user_id: str,
     db: Session = Depends(get_db),
 ):
     existing_note = (
         db.query(models.Note)
-        .filter(models.Note.id == note_id)
+        .filter(
+            models.Note.id == note_id,
+            models.Note.user_id == user_id,
+        )
         .first()
     )
 
