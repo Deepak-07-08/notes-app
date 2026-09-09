@@ -1,0 +1,1203 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: #f8f8fb;
+  color: #20202a;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+  height: 78px;
+
+  padding: 0 55px;
+
+  background: white;
+
+  border-bottom: 1px solid #eeeeF3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.logo-icon {
+  font-size: 25px;
+}
+
+.logo h1 {
+  margin: 0;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  color: #17171d;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.search-box {
+  width: 275px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0 13px;
+
+  background: #f7f7fa;
+
+  border: 1px solid #e7e7ed;
+
+  border-radius: 9px;
+}
+
+.search-box span {
+  font-size: 23px;
+  color: #8b8b98;
+}
+
+.search-box input {
+  width: 100%;
+
+  border: 0;
+  outline: none;
+
+  background: transparent;
+
+  color: #33333d;
+}
+
+.new-note-btn {
+  border: 0;
+
+  background: #6c4ce9;
+  color: white;
+
+  padding: 11px 18px;
+
+  border-radius: 8px;
+
+  font-weight: 600;
+
+  transition: 0.2s;
+}
+
+.new-note-btn:hover {
+  background: #5b3bd5;
+}
+
+/* ================= MAIN ================= */
+
+.main {
+  max-width: 1180px;
+
+  margin: auto;
+
+  padding: 38px 30px 60px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 22px;
+}
+
+.section-title h2 {
+  margin: 0;
+
+  font-size: 21px;
+
+  color: #17171d;
+}
+
+.section-title span {
+  font-size: 13px;
+  color: #8c8c98;
+}
+
+/* ================= EMPTY ================= */
+
+.empty-state {
+  min-height: 400px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.empty-icon {
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eeeafd;
+
+  border-radius: 18px;
+
+  font-size: 29px;
+
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  margin: 0 0 7px;
+
+  font-size: 19px;
+
+  color: #20202a;
+}
+
+.empty-state p {
+  margin: 0;
+
+  color: #898994;
+}
+
+.empty-button {
+  margin-top: 22px;
+}
+
+/* ================= NOTES ================= */
+
+.notes-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 18px;
+}
+
+.note-card {
+  min-height: 225px;
+
+  background: white;
+
+  border: 1px solid #e9e9ef;
+
+  border-radius: 13px;
+
+  padding: 19px;
+
+  display: flex;
+  flex-direction: column;
+
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+
+.note-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 25px
+    rgba(30, 30, 50, 0.07);
+}
+
+.note-card-header {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.note-card-header h3 {
+  margin: 0;
+
+  font-size: 18px;
+
+  line-height: 1.35;
+
+  font-weight: 700;
+
+  color: #20202a;
+
+  word-break: break-word;
+}
+
+.pin-btn {
+  border: 0;
+
+  background: transparent;
+
+  padding: 2px;
+
+  font-size: 18px;
+}
+
+.note-content {
+  margin: 12px 0;
+
+  color: #666672;
+
+  line-height: 1.55;
+
+  font-size: 14px;
+
+  white-space: pre-wrap;
+
+  overflow: hidden;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 5;
+
+  -webkit-box-orient: vertical;
+}
+
+.reminder-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 8px 10px;
+
+  background: #f7f5ff;
+
+  border-radius: 7px;
+
+  color: #5d46bb;
+
+  font-size: 12px;
+}
+
+.reminder-info div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.note-footer {
+  margin-top: auto;
+
+  padding-top: 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border-top: 1px solid #f0f0f3;
+}
+
+.note-date {
+  color: #a0a0aa;
+
+  font-size: 11px;
+}
+
+.note-actions {
+  display: flex;
+
+  gap: 5px;
+}
+
+.note-actions button {
+  width: 31px;
+  height: 31px;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  background: transparent;
+}
+
+.note-actions button:hover {
+  background: #f2f2f6;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(20, 20, 30, 0.42);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 25px;
+
+  z-index: 100;
+}
+
+.modal {
+  width: min(680px, 100%);
+
+  max-height: 90vh;
+
+  background: white;
+
+  border-radius: 15px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  box-shadow:
+    0 20px 70px
+    rgba(0, 0, 0, 0.18);
+
+  overflow: hidden;
+}
+
+/* ================= MODAL HEADER ================= */
+
+.modal-header {
+  padding: 22px 25px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  border-bottom:
+    1px solid #eeeeF2;
+}
+
+.modal-header h2 {
+  margin: 0 0 4px;
+
+  font-size: 21px;
+
+  color: #17171d;
+}
+
+.modal-header p {
+  margin: 0;
+
+  color: #8b8b95;
+
+  font-size: 13px;
+}
+
+.close-btn {
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: #f5f5f7;
+
+  font-size: 23px;
+
+  color: #555560;
+}
+
+/* ================= MODAL BODY ================= */
+
+.modal-body {
+  padding: 23px 25px;
+
+  overflow-y: auto;
+}
+
+.field-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #44444e;
+}
+
+.title-input {
+  width: 100%;
+
+  height: 60px;
+
+  padding: 0 16px;
+
+  border:
+    1px solid #ddddE6;
+
+  border-radius: 9px;
+
+  outline: none;
+
+  font-size: 21px;
+
+  font-weight: 700;
+
+  color: #20202a;
+
+  background: #F4F4F6;
+}
+
+.title-input::placeholder {
+  font-weight: 500;
+
+  color: #777780;
+}
+
+.title-input:focus {
+  border-color: #8168e9;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(108, 76, 233, 0.09);
+}
+
+.content-label {
+  margin-top: 19px;
+}
+
+.content-input {
+  width: 100%;
+
+  min-height: 175px;
+
+  resize: vertical;
+
+  padding: 14px 16px;
+
+  border:
+    1px solid #ddddE6;
+
+  border-radius: 9px;
+
+  outline: none;
+
+  font-size: 15px;
+
+  line-height: 1.6;
+
+  color: #20202a;
+
+  background: #F4F4F6;
+}
+
+.content-input::placeholder {
+  color: #777780;
+}
+
+.content-input:focus {
+  border-color: #8168e9;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(108, 76, 233, 0.09);
+}
+
+/* ================= REMINDER ================= */
+
+.reminder-section {
+  margin-top: 20px;
+
+  border:
+    1px solid #e6e3f5;
+
+  border-radius: 10px;
+
+  overflow: visible;
+}
+
+.reminder-top {
+  min-height: 65px;
+
+  padding: 13px 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  background: #faf9ff;
+
+  border-radius: 10px;
+}
+
+.reminder-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.bell {
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #eeeafd;
+
+  border-radius: 8px;
+}
+
+.reminder-title div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.reminder-title strong {
+  font-size: 13px;
+
+  color: #20202a;
+}
+
+.reminder-title small {
+  color: #92919c;
+
+  font-size: 11px;
+}
+
+/* ================= SWITCH ================= */
+
+.switch {
+  position: relative;
+
+  width: 43px;
+
+  height: 24px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+
+  inset: 0;
+
+  background: #d7d7df;
+
+  border-radius: 20px;
+
+  transition: 0.2s;
+}
+
+.slider::before {
+  content: "";
+
+  position: absolute;
+
+  width: 18px;
+
+  height: 18px;
+
+  left: 3px;
+
+  top: 3px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  transition: 0.2s;
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.2);
+}
+
+.switch input:checked
+  + .slider {
+  background: #6c4ce9;
+}
+
+.switch input:checked
+  + .slider::before {
+  transform:
+    translateX(19px);
+}
+
+/* ================= REMINDER CONTROLS ================= */
+
+.reminder-controls {
+  padding: 17px;
+
+  border-top:
+    1px solid #e9e7f2;
+
+  background: white;
+
+  border-radius: 0 0 10px 10px;
+}
+
+.reminder-controls label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: #555560;
+}
+
+.date-control {
+  position: relative;
+}
+
+.date-display {
+  width: 100%;
+
+  height: 43px;
+
+  border:
+    1px solid #dedee6;
+
+  border-radius: 8px;
+
+  background: #F4F4F6;
+
+  color: #20202a;
+
+  text-align: left;
+
+  padding: 0 12px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.date-display:hover {
+  border-color: #8068e7;
+}
+
+.date-arrow {
+  margin-left: auto;
+
+  font-size: 16px;
+
+  color: #555560;
+}
+
+/* ================= CALENDAR ================= */
+
+.calendar {
+  width: 100%;
+
+  margin-top: 8px;
+
+  border:
+    1px solid #dedee8;
+
+  border-radius: 9px;
+
+  padding: 12px;
+
+  background: white;
+
+  box-shadow:
+    0 8px 25px
+    rgba(30, 30, 50, 0.08);
+
+  position: relative;
+
+  z-index: 10;
+}
+
+.calendar-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+}
+
+.calendar-header strong {
+  font-size: 13px;
+
+  color: #20202a;
+}
+
+.calendar-header button {
+  width: 28px;
+  height: 28px;
+
+  border: 0;
+
+  border-radius: 6px;
+
+  background: #f4f4f7;
+
+  font-size: 20px;
+
+  color: #555560;
+}
+
+.calendar-weekdays,
+.calendar-days {
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, 1fr);
+
+  text-align: center;
+}
+
+.calendar-weekdays {
+  margin-bottom: 5px;
+}
+
+.calendar-weekdays span {
+  font-size: 10px;
+
+  color: #9999a3;
+
+  font-weight: 600;
+}
+
+.calendar-days button {
+  height: 31px;
+
+  border: 0;
+
+  background: transparent;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+
+  color: #4d4d58;
+}
+
+.calendar-days
+  button:not(:disabled):hover {
+  background: #f0edff;
+
+  color: #5f45ca;
+}
+
+.calendar-days button:disabled {
+  cursor: default;
+}
+
+.calendar-days
+  button.selected-day {
+  background: #6c4ce9;
+
+  color: white;
+
+  font-weight: 700;
+}
+
+/* ================= TIME + REPEAT ================= */
+
+.time-repeat-row {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 15px;
+
+  margin-top: 15px;
+}
+
+/* ================= TIME ================= */
+
+.time-picker {
+  height: 43px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  border:
+    1px solid #dedee6;
+
+  border-radius: 8px;
+
+  padding: 4px 6px;
+
+  background: #F4F4F6;
+
+  color: #20202a;
+}
+
+.time-picker select {
+  height: 33px;
+
+  border: 0;
+
+  outline: none;
+
+  background: #F4F4F6;
+
+  color: #20202a;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.time-picker > span {
+  color: #20202a;
+
+  font-weight: 700;
+}
+
+.ampm {
+  display: flex;
+
+  margin-left: auto;
+
+  background: #e7e7eb;
+
+  border-radius: 6px;
+
+  padding: 2px;
+}
+
+.ampm button {
+  border: 0;
+
+  border-radius: 5px;
+
+  background: transparent;
+
+  padding: 5px 7px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  color: #20202a;
+}
+
+.ampm button.active {
+  background: white;
+
+  color: #5e44cb;
+
+  box-shadow:
+    0 1px 3px
+    rgba(0, 0, 0, 0.08);
+}
+
+/* ================= REPEAT ================= */
+
+.repeat-control select {
+  width: 100%;
+
+  height: 43px;
+
+  border:
+    1px solid #dedee6;
+
+  border-radius: 8px;
+
+  padding: 0 10px;
+
+  outline: none;
+
+  background: #F4F4F6;
+
+  color: #20202a;
+
+  font-size: 13px;
+}
+
+.repeat-control select:focus {
+  border-color: #8068e7;
+}
+
+/* ================= MODAL FOOTER ================= */
+
+.modal-footer {
+  padding: 15px 25px;
+
+  border-top:
+    1px solid #eeeeF2;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  background: white;
+}
+
+.cancel-btn,
+.save-btn {
+  border-radius: 8px;
+
+  padding: 10px 17px;
+
+  font-weight: 600;
+}
+
+.cancel-btn {
+  border:
+    1px solid #ddddE5;
+
+  background: white;
+
+  color: #555560;
+}
+
+.cancel-btn:hover {
+  background: #f7f7f8;
+}
+
+.save-btn {
+  border: 0;
+
+  background: #6c4ce9;
+
+  color: white;
+}
+
+.save-btn:hover {
+  background: #5b3bd5;
+}
+
+/* ================= DELETE ================= */
+
+.delete-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 200;
+
+  background:
+    rgba(20, 20, 30, 0.45);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.delete-modal {
+  width: 390px;
+
+  max-width: 100%;
+
+  background: white;
+
+  border-radius: 14px;
+
+  padding: 27px;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 60px
+    rgba(0, 0, 0, 0.2);
+}
+
+.delete-icon {
+  width: 48px;
+  height: 48px;
+
+  margin: 0 auto 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #fff1f1;
+
+  border-radius: 12px;
+
+  font-size: 21px;
+}
+
+.delete-modal h2 {
+  margin: 0 0 7px;
+
+  font-size: 19px;
+
+  color: #20202a;
+}
+
+.delete-modal p {
+  margin: 0;
+
+  color: #858590;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.delete-actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.delete-confirm-btn {
+  border: 0;
+
+  background: #e54848;
+
+  color: white;
+
+  border-radius: 8px;
+
+  padding: 10px 20px;
+
+  font-weight: 600;
+}
+
+.delete-confirm-btn:hover {
+  background: #d33737;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 850px) {
+  .header {
+    height: auto;
+
+    padding: 18px 25px;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .header-right {
+    width: 100%;
+  }
+
+  .search-box {
+    flex: 1;
+  }
+
+  .notes-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .header-right {
+    flex-direction: column;
+  }
+
+  .search-box,
+  .new-note-btn {
+    width: 100%;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding: 25px 18px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal {
+    max-height: 95vh;
+  }
+
+  .time-repeat-row {
+    grid-template-columns: 1fr;
+  }
+
+  .title-input {
+    height: 54px;
+  }
+
+  .content-input {
+    min-height: 140px;
+  }
+}
