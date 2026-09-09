@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class NoteBase(BaseModel):
+    user_id: str
     title: str
     content: str
     pinned: bool = False
