@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-const API_URL = "http://127.0.0.1:8000";
-
+const API_URL = "https://notes-app-taxg.onrender.com";
 const REPEAT_OPTIONS = [
   { value: "none", label: "Does not repeat" },
   { value: "daily", label: "Daily" },
