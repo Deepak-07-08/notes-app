@@ -165,6 +165,31 @@ function CalendarPicker({ value, onChange, onClose }) {
   };
 
   return (
+    <button
+      type="button"
+      onClick={async () => {
+        const allowed = await requestNotificationPermission();
+        if (allowed) {
+          new Notification("NOTESSS Test 🔔", {
+            body: "If you can see this, phone notifications are working."
+          });
+        } else {
+          alert("Notifications are not allowed in this browser.");
+        }
+      }}
+      style={{
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        zIndex: 9999,
+        padding: "10px 14px",
+        borderRadius: "10px",
+        border: "none",
+        cursor: "pointer"
+      }}
+    >
+      Test Notification
+    </button>
     <div className="calendar">
       <div className="calendar-header">
         <button type="button" onClick={previousMonth}>
