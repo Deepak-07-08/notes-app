@@ -63,6 +63,61 @@ function formatTime(time) {
   ).padStart(2, "0")} ${period}`;
 }
 
+
+/* ---------------- NOTIFICATIONS ---------------- */
+
+async function requestNotificationPermission() {
+  if (typeof Notification === "undefined") return false;
+  if (Notification.permission === "granted") return true;
+  if (Notification.permission === "denied") return false;
+
+  try {
+    return (await Notification.requestPermission()) === "granted";
+  } catch {
+    return false;
+  }
+}
+
+function getReminderOccurrence(note, now = new Date()) {
+  if (!note.reminder_enabled || !note.reminder_date || !note.reminder_time) {
+    return null;
+  }
+
+  const [year, month, day] = note.reminder_date.split("-").map(Number);
+  const [hour, minute] = note.reminder_time.split(":").map(Number);
+  const start = new Date(year, month - 1, day, hour, minute, 0, 0);
+
+  if (now < start) return null;
+  if (note.repeat === "none") return start;
+
+  const today = new Date(
+    now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0, 0
+  );
+
+  if (note.repeat === "daily") return today;
+
+  if (note.repeat === "weekly") {
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const todayDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const days = Math.floor((todayDay - startDay) / 86400000);
+    return days >= 0 && days % 7 === 0 ? today : null;
+  }
+
+  if (note.repeat === "monthly") {
+    return now.getDate() === start.getDate() ? today : null;
+  }
+
+  return null;
+}
+
+function getOccurrenceKey(note, occurrence) {
+  return `notes_reminder_${note.id}_${occurrence.getFullYear()}-${String(
+    occurrence.getMonth() + 1
+  ).padStart(2, "0")}-${String(occurrence.getDate()).padStart(2, "0")}_${String(
+    occurrence.getHours()
+  ).padStart(2, "0")}:${String(occurrence.getMinutes()).padStart(2, "0")}`;
+}
+
 /* ---------------- CALENDAR ---------------- */
 
 function CalendarPicker({ value, onChange, onClose }) {
@@ -299,6 +354,42 @@ function App() {
 
     loadNotes();
   }, []);
+
+  /* ---------------- REMINDER CHECKER ---------------- */
+  useEffect(() => {
+    const checkReminders = () => {
+      if (
+        typeof Notification === "undefined" ||
+        Notification.permission !== "granted"
+      ) {
+        return;
+      }
+
+      const now = new Date();
+
+      notes.forEach((note) => {
+        const occurrence = getReminderOccurrence(note, now);
+        if (!occurrence) return;
+
+        const secondsLate = Math.floor((now - occurrence) / 1000);
+        if (secondsLate < 0 || secondsLate > 60) return;
+
+        const key = getOccurrenceKey(note, occurrence);
+        if (localStorage.getItem(key)) return;
+
+        localStorage.setItem(key, "1");
+
+        new Notification(note.title || "NOTESSS Reminder", {
+          body: note.content || "You have a reminder.",
+          tag: key,
+        });
+      });
+    };
+
+    checkReminders();
+    const interval = setInterval(checkReminders, 15000);
+    return () => clearInterval(interval);
+  }, [notes]);
 
   /* ---------------- NEW NOTE ---------------- */
 
@@ -833,6 +924,10 @@ function App() {
                       onChange={(e) => {
                         const enabled =
                           e.target.checked;
+
+                        if (enabled) {
+                          requestNotificationPermission();
+                        }
 
                         setForm({
                           ...form,
