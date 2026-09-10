@@ -165,31 +165,6 @@ function CalendarPicker({ value, onChange, onClose }) {
   };
 
   return (
-    <button
-      type="button"
-      onClick={async () => {
-        const allowed = await requestNotificationPermission();
-        if (allowed) {
-          new Notification("NOTESSS Test 🔔", {
-            body: "If you can see this, phone notifications are working."
-          });
-        } else {
-          alert("Notifications are not allowed in this browser.");
-        }
-      }}
-      style={{
-        position: "fixed",
-        bottom: "20px",
-        right: "20px",
-        zIndex: 9999,
-        padding: "10px 14px",
-        borderRadius: "10px",
-        border: "none",
-        cursor: "pointer"
-      }}
-    >
-      Test Notification
-    </button>
     <div className="calendar">
       <div className="calendar-header">
         <button type="button" onClick={previousMonth}>
@@ -396,15 +371,15 @@ function App() {
         const occurrence = getReminderOccurrence(note, now);
         if (!occurrence) return;
 
-        const secondsLate = Math.floor((now - occurrence) / 1000);
-        if (secondsLate < 0 || secondsLate > 60) return;
-
+        // Fire when the reminder is due or overdue.
+        // Mobile browsers can pause/throttle timers, so we should not
+        // require the notification to be detected within exactly 60 seconds.
         const key = getOccurrenceKey(note, occurrence);
         if (localStorage.getItem(key)) return;
 
         localStorage.setItem(key, "1");
 
-        new Notification(note.title || "NOTESSS Reminder", {
+        new Notification(note.title || "NOTESSS Reminder 🔔", {
           body: note.content || "You have a reminder.",
           tag: key,
         });
